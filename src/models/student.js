@@ -13,12 +13,12 @@ const studentSchema = mongoose.Schema({
   teacherId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref:"Teacher"
+    ref: "Teacher",
   },
   principleId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref:"Principle"
+    ref: "Principle",
   },
 });
 
