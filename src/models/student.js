@@ -10,6 +10,10 @@ const studentSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  role: {
+    type: String,
+    default:"student"
+  },
   teacherId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

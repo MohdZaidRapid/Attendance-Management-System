@@ -15,7 +15,7 @@ app.post("/principle", async (req, res) => {
     await principle.save();
     res.status(201).send(principle);
   } catch (e) {
-    res.status(400).send("Bad Request");
+    res.status(400).send(e);
   }
 });
 
@@ -85,7 +85,10 @@ app.get("/student/principle", async (req, res) => {
 });
 
 app.get("/student/teacher", async (req, res) => {
-  const teachers = await Student.find({attendanceSchedule:true}).populate("teacherId", "name -_id");
+  const teachers = await Student.find({ attendanceSchedule: true }).populate(
+    "teacherId",
+    "name -_id"
+  );
 
   try {
     res.status(200).send(teachers);
@@ -97,3 +100,11 @@ app.get("/student/teacher", async (req, res) => {
 app.listen(port, () => {
   console.log("Server is up on port" + port);
 });
+
+// {createdAt:{$gte:ISODate(“2020-03-01”),$lt:ISODate(“2021-04-01”)}}
+// items.find({
+//   created_at: {
+//       $gte: ISODate("2010-04-29T00:00:00.000Z"),
+//       $lt: ISODate("2010-05-01T00:00:00.000Z")
+//   }
+// })

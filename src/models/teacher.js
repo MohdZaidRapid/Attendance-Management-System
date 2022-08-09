@@ -7,6 +7,10 @@ const teacherSchema = mongoose.Schema({
     trim: true,
   },
   attendanceScheduleTeacher: [{ type: Boolean, default: false }],
+  role: {
+    type: String,
+    default: "teacher",
+  },
   principleId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
