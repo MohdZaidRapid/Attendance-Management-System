@@ -3,21 +3,33 @@ require("./db/mongoose");
 const Principle = require("./models/principle");
 const Teacher = require("./models/teacher");
 const Student = require("./models/student");
+const auth = require("./middleware/auth");
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 
-app.post("/principle", async (req, res) => {
+app.post("/signup", async (req, res) => {
   const principle = await new Principle(req.body);
   try {
     await principle.save();
-    res.status(201).send(principle);
+    const token = await principle.getJWt();
+    res.status(201).send(token);
   } catch (e) {
-    res.status(400).send(e);
+    res.status(400).send(e.message);
   }
 });
+
+// app.post("/principle", async (req, res) => {
+//   const principle = await new Principle(req.body);
+//   try {
+//     await principle.save();
+//     res.status(201).send(principle);
+//   } catch (e) {
+//     res.status(400).send(e);
+//   }
+// });
 
 app.post("/teacher", async (req, res) => {
   const teacher = await new Teacher(req.body);
@@ -48,7 +60,7 @@ app.get("/principle", async (req, res) => {
   }
 });
 
-app.get("/student", async (req, res) => {
+app.get("/student", auth, async (req, res) => {
   const students = await Student.find();
   try {
     res.status(200).send(students);
