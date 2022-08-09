@@ -4,6 +4,7 @@ const Principle = require("./models/principle");
 const Teacher = require("./models/teacher");
 const Student = require("./models/student");
 const auth = require("./middleware/auth");
+const restricts = require("./middleware/restrict").restricts;
 
 const app = express();
 const port = 3000;
@@ -69,7 +70,7 @@ app.get("/student", auth, async (req, res) => {
   }
 });
 
-app.get("/teacher", async (req, res) => {
+app.get("/teacher", auth, restricts("principle"), async (req, res) => {
   const teachers = await Teacher.find();
   try {
     res.status(200).send(teachers);

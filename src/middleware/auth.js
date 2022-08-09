@@ -10,7 +10,7 @@ const auth = async (req, res, next) => {
       _id: decoded._id,
     });
     if (!principle) {
-      throw new Error();
+      throw new Error("Not authenticated");
     }
     req.token = token;
     req.principle = principle;
