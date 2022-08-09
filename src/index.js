@@ -84,14 +84,31 @@ app.get("/student/priciple", async (req, res) => {
   }
 });
 
+// app.get("/student/teacher", async (req, res) => {
+//   const teachers = await Student.find()
+//     .populate({
+//       path: "teacherId",
+//       select: "name -_id",
+//     })
+//     .exec();
+
+//   try {
+//     res.status(200).send(teachers);
+//   } catch (error) {
+//     res.status(400).send("Not Found");
+//   }
+// });
+
 app.get("/student/teacher", async (req, res) => {
-  const teachers = await Student.find().populate("teacherId");
+  const teachers = await Student.find().populate("teacherId", "name -_id");
+
   try {
     res.status(200).send(teachers);
   } catch (error) {
     res.status(400).send("Not Found");
   }
 });
+
 // 62f2221dd6ac1f5fa4134a78
 // 62f22228d6ac1f5fa4134a7a
 
