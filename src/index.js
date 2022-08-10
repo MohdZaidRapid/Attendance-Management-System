@@ -22,16 +22,6 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-// app.post("/principle", async (req, res) => {
-//   const principle = await new Principle(req.body);
-//   try {
-//     await principle.save();
-//     res.status(201).send(principle);
-//   } catch (e) {
-//     res.status(400).send(e);
-//   }
-// });
-
 app.post("/teacher", auth, async (req, res) => {
   const principleId = req.principle;
 
@@ -110,24 +100,11 @@ app.patch("/update/student/:id", auth, async (req, res) => {
   }
 });
 
-// app.get("/teacher/student/:name", async (req, res) => {
-//   const name1 = req.params.name;
-//   const stundent = await Student.find({ teacherName: name1 });
-//   try {
-//     res.status(200).send(stundent);
-//   } catch (error) {
-//     res.status(400).send("Not Found");
-//   }
-// });
-
-app.get("/teacher/students/:name/:attendance?", auth,async (req, res) => {
+app.get("/teacher/students/:name/:attendance?", auth, async (req, res) => {
   const name1 = req.params.name;
   const attendance = req.params.attendance;
   let student;
 
-  // const student = await Student.find({ teacherName: name1 }).find({
-  //   attendanceStudent: attendance,
-  // });
   if (req.params.attendance) {
     student = await Student.find({ teacherName: name1 }).find({
       attendanceStudent: attendance,
@@ -143,14 +120,108 @@ app.get("/teacher/students/:name/:attendance?", auth,async (req, res) => {
   }
 });
 
-// app.get("/student/principle", async (req, res) => {
-//   const teachers = await Student.find().populate("principleId");
+app.get("/teacher/attendancedate/:attendance?", auth, async (req, res) => {
+  const present = req.params.attendance;
+  let betweenDates;
+  if (present) {
+    betweenDates = await Teacher.find({
+      createdAt: {
+        $gte: new Date("2019-10-25T00:00:00.000Z"),
+        $lt: new Date("2019-10-29T00:00:00.000Z"),
+      },
+    }).find({ attendanceTeacher: present });
+  } else {
+    betweenDates = await Teacher.find({
+      createdAt: {
+        $gte: new Date("2019-10-25T00:00:00.000Z"),
+        $lt: new Date("2019-10-29T00:00:00.000Z"),
+      },
+    });
+  }
+
+  try {
+    res.status(200).send(betweenDates);
+  } catch (e) {
+    res.status(404).send(e);
+  }
+});
+
+app.get("/student/attendancedate", auth, async (req, res) => {
+  const betweenDates = await Student.find({
+    createdAt: {
+      $gte: new Date("2019-10-25T00:00:00.000Z"),
+      $lt: new Date("2019-10-29T00:00:00.000Z"),
+    },
+  });
+
+  try {
+    res.status(200).send(betweenDates);
+  } catch (e) {
+    res.status(404).send(e);
+  }
+});
+
+app.get("/findstudentwithdate/:date", auth, async (req, res) => {
+  let date = req.params.date;
+  const student = await Student.find({
+    createdAt: new Date(date + "T00:00:00.000Z"),
+  });
+  res.status(201).send(student);
+});
+
+app.get("/findteacherwithdate/:date/:attendance?", auth, async (req, res) => {
+  let date = req.params.date;
+  let attendance = req.params.attendance;
+  let query;
+
+  if (attendance) {
+    query = await Teacher.find({
+      createdAt: new Date(date + "T00:00:00.000Z"),
+    }).find({ attendanceTeacher: attendance });
+  } else {
+    query = await Teacher.find({
+      createdAt: new Date(date + "T00:00:00.000Z"),
+    });
+  }
+  res.status(201).send(query);
+});
+
+app.listen(port, () => {
+  console.log("Server is up on port" + port);
+});
+
+// app.get("/teacher/student/:name", async (req, res) => {
+//   const name1 = req.params.name;
+//   const stundent = await Student.find({ teacherName: name1 });
 //   try {
-//     res.status(200).send(teachers);
+//     res.status(200).send(stundent);
 //   } catch (error) {
 //     res.status(400).send("Not Found");
 //   }
 // });
+
+// app.get("/teacher/attendance", auth, async (req, res) => {
+//   const counts = await Teacher.find({
+//     attendanceTeacher: false,
+//   }).length;
+
+//   res.send(counts);
+// });
+// app.get("/student/count", async (req, res) => {
+//   const students = await Student.count({}).exec();
+
+//   try {
+//     res.status(200).send(students);
+//   } catch (error) {
+//     res.status(404).send(error.message);
+//   }
+// });
+
+// someModel.countDocuments({}, function(err, docCount) {
+//   if (err) { return handleError(err) } //handle possible errors
+//   console.log(docCount)
+//   //and do some other fancy stuff
+// })
 
 // app.get("/student/teacher", async (req, res) => {
 //   const teachers = await Student.find({ attendanceSchedule: true }).populate(
@@ -177,9 +248,15 @@ app.get("/teacher/students/:name/:attendance?", auth,async (req, res) => {
 //   }
 // });
 
-app.listen(port, () => {
-  console.log("Server is up on port" + port);
-});
+// app.post("/principle", async (req, res) => {
+//   const principle = await new Principle(req.body);
+//   try {
+//     await principle.save();
+//     res.status(201).send(principle);
+//   } catch (e) {
+//     res.status(400).send(e);
+//   }
+// });
 
 // {createdAt:{$gte:ISODate(“2020-03-01”),$lt:ISODate(“2021-04-01”)}}
 // items.find({
