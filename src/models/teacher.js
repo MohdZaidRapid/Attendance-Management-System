@@ -6,19 +6,19 @@ const teacherSchema = mongoose.Schema({
     required: true,
     trim: true,
   },
-  attendanceScheduleTeacher: [{ type: Boolean, default: false }],
+  createdAt: {
+    type: Date,
+  },
+  attendanceTeacher: [{ type: Boolean, default: false }],
   role: {
     type: String,
     default: "teacher",
   },
   principleId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     ref: "Principle",
   },
 });
-
-
 
 const Student = mongoose.model("Teacher", teacherSchema);
 

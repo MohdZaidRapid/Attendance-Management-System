@@ -32,23 +32,38 @@ app.post("/signup", async (req, res) => {
 //   }
 // });
 
-app.post("/teacher", async (req, res) => {
-  const teacher = await new Teacher(req.body);
+app.post("/teacher", auth, async (req, res) => {
+  const principleId = req.principle;
+
+  const teacher = await new Teacher({
+    name: req.body.name,
+    attendanceTeacher: req.body.attendanceTeacher,
+    createdAt: req.body.createdAt,
+    principleId: principleId,
+  });
+
   try {
     await teacher.save();
     res.status(201).send(teacher);
-  } catch (error) {
-    res.status(400).send("Bad Request");
+  } catch (e) {
+    res.status(400).send(e);
   }
 });
 
-app.post("/student", async (req, res) => {
-  const student = await new Student(req.body);
+app.post("/student", auth, async (req, res) => {
+  const principleId = req.body.principleId;
+  const student = await new Student({
+    name: req.body.name,
+    attendanceStudent: req.body.attendanceStudent,
+    createdAt: req.body.createdAt,
+    teacherName: req.body.teacherName,
+    principleId: principleId,
+  });
   try {
     await student.save();
     res.status(201).send(student);
-  } catch (error) {
-    res.status(400).send("Bad Request");
+  } catch (e) {
+    res.status(400).send(e);
   }
 });
 
@@ -79,36 +94,64 @@ app.get("/teacher", auth, restricts("principle"), async (req, res) => {
   }
 });
 
-app.get("/teacher/principle", async (req, res) => {
-  const teachers = await Teacher.find().populate("principleId");
+app.patch("/update/student/:id", auth, async (req, res) => {
+  const student = await Student.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: false,
+  });
+
   try {
-    res.status(200).send(teachers);
-  } catch (error) {
-    res.status(400).send("Not Found");
+    if (!student) {
+      return res.status(400).send("No Student found with this id");
+    }
+    res.status(200).send(student);
+  } catch (e) {
+    res.status(404).send(e.message);
   }
 });
 
-app.get("/student/principle", async (req, res) => {
-  const teachers = await Student.find().populate("principleId");
-  try {
-    res.status(200).send(teachers);
-  } catch (error) {
-    res.status(400).send("Not Found");
-  }
-});
+// app.get("/teacher/principle", async (req, res) => {
+//   const teachers = await Teacher.find().populate("principleId");
+//   try {
+//     res.status(200).send(teachers);
+//   } catch (error) {
+//     res.status(400).send("Not Found");
+//   }
+// });
 
-app.get("/student/teacher", async (req, res) => {
-  const teachers = await Student.find({ attendanceSchedule: true }).populate(
-    "teacherId",
-    "name -_id"
-  );
+// app.get("/student/principle", async (req, res) => {
+//   const teachers = await Student.find().populate("principleId");
+//   try {
+//     res.status(200).send(teachers);
+//   } catch (error) {
+//     res.status(400).send("Not Found");
+//   }
+// });
 
-  try {
-    res.status(200).send(teachers);
-  } catch (error) {
-    res.status(400).send("Not Found");
-  }
-});
+// app.get("/student/teacher", async (req, res) => {
+//   const teachers = await Student.find({ attendanceSchedule: true }).populate(
+//     "teacherId",
+//     "name -_id"
+//   );
+
+//   try {
+//     res.status(200).send(teachers);
+//   } catch (error) {
+//     res.status(400).send("Not Found");
+//   }
+// });
+
+// app.get("/studentdetails", auth, async (req, res) => {
+//   const teachers = await Student.find({
+//     principleId: req.principleId,
+//   }).populate("teacherId", "name -_id");
+
+//   try {
+//     res.status(200).send(teachers);
+//   } catch (error) {
+//     res.status(400).send("Not Found");
+//   }
+// });
 
 app.listen(port, () => {
   console.log("Server is up on port" + port);

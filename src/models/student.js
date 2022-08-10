@@ -6,22 +6,24 @@ const studentSchema = mongoose.Schema({
     required: true,
     trim: true,
   },
-  attendanceSchedule: {
+  attendanceStudent: {
     type: Boolean,
     default: false,
   },
   role: {
     type: String,
-    default:"student"
+    default: "student",
   },
-  teacherId: {
-    type: mongoose.Schema.Types.ObjectId,
+  createdAt: {
+    type: Date,
+  },
+  teacherName: {
+    type: String,
     required: true,
     ref: "Teacher",
   },
   principleId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     ref: "Principle",
   },
 });
