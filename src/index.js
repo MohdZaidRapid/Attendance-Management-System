@@ -110,14 +110,38 @@ app.patch("/update/student/:id", auth, async (req, res) => {
   }
 });
 
-// app.get("/teacher/principle", async (req, res) => {
-//   const teachers = await Teacher.find().populate("principleId");
-//   try {
-//     res.status(200).send(teachers);
-//   } catch (error) {
-//     res.status(400).send("Not Found");
-//   }
-// });
+app.get("/teacher/student/:name", async (req, res) => {
+  const name1 = req.params.name;
+  const stundent = await Student.find({ teacherName: name1 });
+  try {
+    res.status(200).send(stundent);
+  } catch (error) {
+    res.status(400).send("Not Found");
+  }
+});
+
+app.get("/teacher/students/:name/:attendance?", async (req, res) => {
+  const name1 = req.params.name;
+  const attendance = req.params.attendance;
+  let student;
+
+  // const student = await Student.find({ teacherName: name1 }).find({
+  //   attendanceStudent: attendance,
+  // });
+  if (req.params.attendance) {
+    student = await Student.find({ teacherName: name1 }).find({
+      attendanceStudent: attendance,
+    });
+  } else {
+    student = await Student.find({ teacherName: name1 });
+  }
+
+  try {
+    res.status(200).send(student);
+  } catch (error) {
+    res.status(400).send("Not Found");
+  }
+});
 
 // app.get("/student/principle", async (req, res) => {
 //   const teachers = await Student.find().populate("principleId");
