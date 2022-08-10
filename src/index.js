@@ -110,17 +110,17 @@ app.patch("/update/student/:id", auth, async (req, res) => {
   }
 });
 
-app.get("/teacher/student/:name", async (req, res) => {
-  const name1 = req.params.name;
-  const stundent = await Student.find({ teacherName: name1 });
-  try {
-    res.status(200).send(stundent);
-  } catch (error) {
-    res.status(400).send("Not Found");
-  }
-});
+// app.get("/teacher/student/:name", async (req, res) => {
+//   const name1 = req.params.name;
+//   const stundent = await Student.find({ teacherName: name1 });
+//   try {
+//     res.status(200).send(stundent);
+//   } catch (error) {
+//     res.status(400).send("Not Found");
+//   }
+// });
 
-app.get("/teacher/students/:name/:attendance?", async (req, res) => {
+app.get("/teacher/students/:name/:attendance?", auth,async (req, res) => {
   const name1 = req.params.name;
   const attendance = req.params.attendance;
   let student;
