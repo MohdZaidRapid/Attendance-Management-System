@@ -161,13 +161,13 @@ app.get("/student/attendancedate", auth, async (req, res) => {
   }
 });
 
-app.get("/findstudentwithdate/:date", auth, async (req, res) => {
-  let date = req.params.date;
-  const student = await Student.find({
-    createdAt: new Date(date + "T00:00:00.000Z"),
-  });
-  res.status(201).send(student);
-});
+// app.get("/findstudentwithdate/:date", auth, async (req, res) => {
+//   let date = req.params.date;
+//   const student = await Student.find({
+//     createdAt: new Date(date + "T00:00:00.000Z"),
+//   });
+//   res.status(201).send(student);
+// });
 
 app.get("/findteacherwithdate/:date/:attendance?", auth, async (req, res) => {
   let date = req.params.date;
@@ -184,6 +184,20 @@ app.get("/findteacherwithdate/:date/:attendance?", auth, async (req, res) => {
     });
   }
   res.status(201).send(query);
+});
+
+app.get("/allmonth", auth, async (req, res) => {
+  const presentT = await Student.find({ attendanceStudent: true });
+  const absentT = await Student.find({ attendanceStudent: false });
+
+  res.status(200).send({ Present: presentT, Absent: absentT });
+});
+
+app.get("/allmonthTeacher", auth, async (req, res) => {
+  const presentT = await Teacher.find({ attendanceTeacher: true });
+  const absentT = await Teacher.find({ attendanceTeacher: false });
+
+  res.status(200).send({ Present: presentT, Absent: absentT });
 });
 
 app.listen(port, () => {
